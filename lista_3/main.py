@@ -137,5 +137,118 @@ def my_strip(l1: list, l2: list):
 # Questão 16
 # "sdd" "saudade"
 def consoantList(l1: list, l2: list):
-    aux = my_strip(l1, l2)
-    return (len_list(l2) - len_list(aux)) == len_list(l1)
+    return (len_list(l2) - len_list(my_strip(l1, l2))) == len_list(l1)
+
+
+# Questão 17 (Matches)
+def matches(dic: list, l: list):
+    if dic == []:
+        return []
+    return concat_list(
+        [head(dic)] if consoantList(l, list(head(dic))) else [], matches(tail(dic), l)
+    )
+
+
+# dic = ["arara", "arreio", "haskell", "vaca", "vacuo", "velho", "vermelho", "vicio"]
+# print(matches(dic, list("vc")))
+
+
+# Questão 18
+def proximoPrimo(n: int):
+    if ehPrimo(n + 1):
+        return n + 1
+    return proximoPrimo(n + 1)
+
+
+# Questão 19
+def aux_primes(n, d):
+    if n % d == 0:
+        return d
+    return aux_primes(n, proximoPrimo(d))
+
+
+def primes(n: int):
+    if n == 1:
+        return []
+    return concat_list([aux_primes(n, 2)], primes(n // aux_primes(n, 2)))
+
+
+# Questão 20
+def count_value_in_list(l: list, n: int):
+    if l == []:
+        return 0
+    if n == head(l):
+        return 1 + count_value_in_list(tail(l), n)
+    return count_value_in_list(tail(l), n)
+
+
+def aux_prime_factors(l: list):
+    if l == []:
+        return []
+    return concat_list(
+        [(head(l), count_value_in_list(l, head(l)))],
+        aux_prime_factors([x for x in l if x != head(l)]),
+    )
+
+
+def prime_factors(n: int):
+    return aux_prime_factors(primes(n))
+
+
+# Questão 21
+def aux_split(n: int, llist: list):
+    if llist == [] or head(llist) == n:
+        return []
+    return concat_list([head(llist)], aux_split(n, tail(llist)))
+
+
+def delete_list_by_delimitador(l: list, n: int):
+    if l == []:
+        return []
+    if head(l) == n:
+        return tail(l)
+    return delete_list_by_delimitador(tail(l), n)
+
+
+def split_token(n: int, llist: list):
+    if llist == []:
+        return []
+    return concat_list(
+        [aux_split(n, llist)],
+        split_token(n, delete_list_by_delimitador(llist, n)),
+    )
+
+
+# print(split_token(2, [1, 1, 2, 2, 3, 4]))
+
+
+# Questão 22
+def join_token(n: int, llist: int):
+    if llist == []:
+        return []
+    return concat_list(
+        concat_list(head(llist), [n] if head(llist) != last(llist) else []),
+        join_token(n, tail(llist)),
+    )
+
+
+# Questão 23
+def get_left(l: list, d: int):
+    if d == 0:
+        return []
+    return concat_list([head(l)], get_left(tail(l), d - 1))
+
+
+def get_right(l: list, l_left: list):
+    if l_left == []:
+        return l
+    return get_right(tail(l), tail(l_left))
+
+
+def split_half(l: list):
+    left = get_left(l, len_list(l) // 2)
+    right = get_right(l, left)
+    return left, right
+
+
+print(split_half([1, 2, 3, 4, 5]))
